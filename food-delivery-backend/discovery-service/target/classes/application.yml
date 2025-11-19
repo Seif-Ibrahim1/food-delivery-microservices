@@ -1,0 +1,15 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: discovery-service
+
+eureka:
+  client:
+    # The registry shouldn't register with itself
+    register-with-eureka: false
+    fetch-registry: false
+  server:
+    # Shorten wait time for development environment
+    wait-time-in-ms-when-sync-empty: 5
