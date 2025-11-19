@@ -20,7 +20,7 @@
 
     <modules>
         <module>discovery-service</module>
-        <!-- We will add other modules here as we build them -->
+        <module>api-gateway</module>
     </modules>
 
     <properties>
