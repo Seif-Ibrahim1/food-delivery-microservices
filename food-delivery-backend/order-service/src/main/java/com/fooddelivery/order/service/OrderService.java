@@ -8,6 +8,8 @@ import com.fooddelivery.order.entity.Order;
 import com.fooddelivery.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.fooddelivery.order.event.OrderPlacedEvent;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserClient userClient;             // Feign Client
     private final RestaurantClient restaurantClient; // Feign Client
+    private final RabbitTemplate rabbitTemplate; // RabbitMQ Client
 
     public Order createOrder(Order order) {
         // We do NOT need to check "if (user == null)".
@@ -35,6 +38,17 @@ public class OrderService {
         order.setStatus("CREATED");
         
         // 4. Save
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // --- ASYNC EVENT ---
+        // Create the event object
+        OrderPlacedEvent event = new OrderPlacedEvent(savedOrder.getId(), user.email());
+        
+        // Send it to RabbitMQ
+        // exchangeName, routingKey, object
+        rabbitTemplate.convertAndSend("order.exchange", "order.placed", event);
+        System.out.println("Message Sent: " + event);
+
+        return savedOrder;
     }
 }
