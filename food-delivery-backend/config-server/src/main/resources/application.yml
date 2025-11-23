@@ -1,24 +1,19 @@
 server:
-  port: 8888 # Standard Config Server Port
+  port: 8888
 
 spring:
   application:
     name: config-server
-
-  # Tell Config Server NOT to act as a Client
+  profiles:
+    active: native # Switch from Git to Native file system
   cloud:
     config:
-      enabled: false
       server:
-        git:
-          # ${user.dir} points to the root of the project
-          uri: file:///${user.dir}
-          
-          # Look inside this subfolder for the config files
-          search-paths: config-data
-          
-          # we are working on a branch named 'main'
-          default-label: main
+        native:
+          # Point explicitly to your config-data folder
+          # 'classpath' works great if files are in src/main/resources, 
+          # but for external folders, file:// is safer.
+          search-locations: file:///${user.dir}/config-data
 
 eureka:
   client:
