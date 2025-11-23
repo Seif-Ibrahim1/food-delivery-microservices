@@ -1,0 +1,31 @@
+server:
+  port: 8080 # Standard port for Gateways
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      # 1. Automatic Discovery Routes (Backup: /order-service/orders)
+      discovery:
+        locator:
+          enabled: true # auto-create routes from Eureka
+          lower-case-service-id: true # /user-service instead of /USER-SERVICE
+          
+      # 2. Explicit Clean Routes (Primary: /orders)
+      routes:
+        - id: order-route
+          uri: lb://order-service  # "lb" = Load Balanced (via Eureka)
+          predicates:
+            - Path=/orders/** # If path starts with /orders...
+          # No StripPrefix needed here because Order Controller is ALSO /orders
+
+        - id: user-route
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+
+        - id: restaurant-route
+          uri: lb://restaurant-service
+          predicates:
+            - Path=/restaurants/**

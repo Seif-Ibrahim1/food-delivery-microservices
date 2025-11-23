@@ -1,33 +1,5 @@
-server:
-  port: 8081 # Runs on a different port than Gateway (8080) and Eureka (8761)
-
 spring:
   application:
-    name: user-service # This is the name Eureka uses to identify it
-  
-  datasource:
-    url: jdbc:postgresql://localhost:${DB_PORT:5433}/food_delivery_db
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:password}
-    driver-class-name: org.postgresql.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: update # Automatically creates/updates tables based on Entities
-    show-sql: true # Useful for debugging
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        
-management:
-  tracing:
-    sampling:
-      probability: 1.0 # Log 100% of requests for debugging (will change it to 10% in production if I remembered)
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+    name: user-service
+  config:
+    import: "optional:configserver:http://localhost:8888/"

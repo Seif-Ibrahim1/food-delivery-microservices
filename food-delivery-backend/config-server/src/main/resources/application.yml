@@ -1,0 +1,23 @@
+server:
+  port: 8888 # Standard Config Server Port
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          # ${user.dir} points to the root of the project
+          uri: file:///${user.dir}
+          
+          # Look inside this subfolder for the config files
+          search-paths: config-data
+          
+          # we are working on a branch named 'main'
+          default-label: main
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

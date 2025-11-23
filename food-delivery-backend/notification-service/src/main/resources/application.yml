@@ -1,24 +1,5 @@
-server:
-  port: 8084
-
 spring:
   application:
     name: notification-service
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: ${RABBITMQ_USER:guest}
-    password: ${RABBITMQ_PASS:guest}
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0 # Log 100% of requests for debugging (will change it to 10% in production if I remembered)
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-      
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+  config:
+    import: "optional:configserver:http://localhost:8888/"

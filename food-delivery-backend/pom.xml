@@ -55,11 +55,17 @@
             <artifactId>zipkin-reporter-brave</artifactId>
         </dependency>
         
-        <!-- Actuator (Required to expose metrics) -->
+        <!-- Actuator (Required to expose metrics) Good for health checks & refreshing config -->
         <!-- Most services have this, but adding it here ensures everyone has it -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- CONFIG CLIENT: Allows all services to talk to Config Server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
     </dependencies>
 
