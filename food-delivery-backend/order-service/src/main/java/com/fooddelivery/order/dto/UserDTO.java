@@ -1,11 +1,9 @@
 package com.fooddelivery.order.dto;
 
-import lombok.Data;
-
-@Data
-public class UserDTO {
-    private Long id;
-    private String name;
-    private String email;
-    private String address;
-}
+// Changed from Class to Record for consistency
+public record UserDTO(
+    Long id,
+    String name,
+    String email,
+    String address
+) {}

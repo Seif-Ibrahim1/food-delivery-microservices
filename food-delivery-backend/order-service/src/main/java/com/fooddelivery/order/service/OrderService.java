@@ -20,18 +20,16 @@ public class OrderService {
     private final RestaurantClient restaurantClient; // Feign Client
 
     public Order createOrder(Order order) {
-        // 1. Validate User exists (Calls User Service)
-        UserDTO user = userClient.getUserById(order.getUserId());
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        // 2. Validate Restaurant exists (Calls Restaurant Service)
-        RestaurantDTO restaurant = restaurantClient.getRestaurantById(order.getRestaurantId());
-        if (restaurant == null) {
-            throw new RuntimeException("Restaurant not found");
-        }
+        // We do NOT need to check "if (user == null)".
+        // If the user doesn't exist, userClient throws a FeignException immediately.
+        // The GlobalExceptionHandler will catch that and return a 404.
         
+        // 1. Verify User exists (Will throw exception if 404)
+        UserDTO user = userClient.getUserById(order.getUserId());
+
+        // 2. Verify Restaurant exists (Will throw exception if 404)
+        RestaurantDTO restaurant = restaurantClient.getRestaurantById(order.getRestaurantId());
+
         // 3. Set default values
         order.setOrderTime(LocalDateTime.now());
         order.setStatus("CREATED");

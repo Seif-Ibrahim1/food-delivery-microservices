@@ -1,10 +1,7 @@
 package com.fooddelivery.order.dto;
 
-import lombok.Data;
-
-@Data
-public class RestaurantDTO {
-    private Long id;
-    private String name;
-    private String active;
-}
+public record RestaurantDTO(
+    Long id,
+    String name,
+    String active
+) {}

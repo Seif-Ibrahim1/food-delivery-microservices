@@ -1,12 +1,14 @@
 package com.fooddelivery.order.controller;
 
+import com.fooddelivery.order.dto.OrderRequest;
+import com.fooddelivery.order.dto.OrderResponse;
 import com.fooddelivery.order.entity.Order;
+import com.fooddelivery.order.mapper.OrderMapper;
 import com.fooddelivery.order.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -14,9 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderMapper orderMapper;
 
     @PostMapping
-    public Order placeOrder(@RequestBody Order order) {
-        return orderService.createOrder(order);
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderResponse placeOrder(@RequestBody @Valid OrderRequest request) {
+        // 1. Convert DTO to Entity
+        Order order = orderMapper.toEntity(request);
+        
+        // 2. Call Service (Business Logic + External Calls)
+        Order savedOrder = orderService.createOrder(order);
+        
+        // 3. Convert Entity back to DTO
+        return orderMapper.toResponse(savedOrder);
     }
 }
