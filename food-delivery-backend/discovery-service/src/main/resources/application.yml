@@ -4,20 +4,15 @@ server:
 spring:
   application:
     name: discovery-service
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0 # Log 100% of requests for debugging (will change it to 10% in production if I remembered)
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
+  config:
+    # "optional" means: "Try to connect, but don't crash if server is down"
+    import: "optional:configserver:http://localhost:8888/"
 
 eureka:
+  instance:
+    hostname: localhost
   client:
-    # The registry shouldn't register with itself
-    register-with-eureka: false
-    fetch-registry: false
-  server:
-    # Shorten wait time for development environment
-    wait-time-in-ms-when-sync-empty: 5
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
