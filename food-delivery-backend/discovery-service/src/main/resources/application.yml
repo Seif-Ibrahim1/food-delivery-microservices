@@ -7,6 +7,7 @@ spring:
   config:
     # "optional" means: "Try to connect, but don't crash if server is down"
     import: "optional:configserver:http://localhost:8888/"
+  
 
 eureka:
   instance:

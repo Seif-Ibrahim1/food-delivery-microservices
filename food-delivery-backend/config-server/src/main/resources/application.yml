@@ -8,7 +8,7 @@ spring:
   # Tell Config Server NOT to act as a Client
   cloud:
     config:
-      nabled: false
+      enabled: false
       server:
         git:
           # ${user.dir} points to the root of the project
