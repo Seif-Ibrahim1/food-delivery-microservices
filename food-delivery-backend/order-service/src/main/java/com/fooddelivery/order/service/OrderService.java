@@ -5,11 +5,13 @@ import com.fooddelivery.order.client.UserClient;
 import com.fooddelivery.order.dto.RestaurantDTO;
 import com.fooddelivery.order.dto.UserDTO;
 import com.fooddelivery.order.entity.Order;
-import com.fooddelivery.order.repository.OrderRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import com.fooddelivery.order.event.OrderPlacedEvent;
+import com.fooddelivery.order.repository.OrderRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,8 @@ public class OrderService {
     private final RestaurantClient restaurantClient; // Feign Client
     private final RabbitTemplate rabbitTemplate; // RabbitMQ Client
 
+    @Transactional
+    @CircuitBreaker(name = "external", fallbackMethod = "fallbackCreateOrder")
     public Order createOrder(Order order) {
         // We do NOT need to check "if (user == null)".
         // If the user doesn't exist, userClient throws a FeignException immediately.
@@ -50,5 +54,13 @@ public class OrderService {
         System.out.println("Message Sent: " + event);
 
         return savedOrder;
+    }
+
+    // --- Fallback Method ---
+    // Must have same signature as createOrder + Throwable
+    public Order fallbackCreateOrder(Order order, Throwable t) {
+        // In a real business, we might save this to a "failed_orders" table for retry.
+        // For now, we just throw a clean exception that tells the user "System is busy".
+        throw new RuntimeException("Service Unavailable: Can't place order right now. " + t.getMessage());
     }
 }
