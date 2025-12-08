@@ -14,6 +14,30 @@ spring:
           
       # 2. Explicit Clean Routes (Primary: /orders)
       routes:
+        # 1. User Service Docs
+        - id: user-service-docs
+          uri: lb://user-service
+          predicates:
+            - Path=/v3/api-docs/user-service
+          filters:
+            - RewritePath=/v3/api-docs/user-service, /v3/api-docs
+
+        # 2. Order Service Docs
+        - id: order-service-docs
+          uri: lb://order-service
+          predicates:
+            - Path=/v3/api-docs/order-service
+          filters:
+            - RewritePath=/v3/api-docs/order-service, /v3/api-docs
+
+        # 3. Restaurant Service Docs
+        - id: restaurant-service-docs
+          uri: lb://restaurant-service
+          predicates:
+            - Path=/v3/api-docs/restaurant-service
+          filters:
+            - RewritePath=/v3/api-docs/restaurant-service, /v3/api-docs
+            
         - id: order-route
           uri: lb://order-service  # "lb" = Load Balanced (via Eureka)
           predicates:
@@ -29,3 +53,19 @@ spring:
           uri: lb://restaurant-service
           predicates:
             - Path=/restaurants/**
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: order-service
+        url: /v3/api-docs/order-service
+      - name: user-service
+        url: /v3/api-docs/user-service
+      - name: restaurant-service
+        url: /v3/api-docs/restaurant-service

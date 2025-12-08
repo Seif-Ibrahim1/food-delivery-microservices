@@ -31,3 +31,8 @@ resilience4j:
         waitDurationInOpenState: 5s        # Wait 5s before checking if service is back
         failureRateThreshold: 50           # Trip if 50% fail
         eventConsumerBufferSize: 10
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
